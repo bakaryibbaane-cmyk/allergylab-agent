@@ -16,6 +16,8 @@ uv run kit agent "Combien de lignes compte le tableau ?"
 
 `uv run kit` seul affiche la liste des commandes. Chaque commande rend le code 0 quand tout va bien, 1 sinon. Tout passe par `uv run` : pas d'environnement virtuel à activer, pas de `pip`.
 
+`installer` te demande la clé d'API que l'animateur t'a donnée : colle-la dans le terminal, rien ne s'affiche, c'est normal. Elle se range dans ton dossier personnel (`.allergylab/cle`), hors du dépôt : elle ne peut pas partir dans un commit. Pour la remplacer : `uv run kit cle`.
+
 ## Les données
 
 `donnees/allergenchipchallenge-data-corrected-final-hdh-sfa.csv` est le jeu « Allergen Chip Challenge » publié par la Société Française d'Allergologie, DOI [10.60597/j5fe-g420](https://doi.org/10.60597/j5fe-g420), sous Licence Ouverte 2.0. Son dictionnaire officiel, `donnees/acc-dictionnaire-final.xls`, est livré tel que publié.
@@ -61,3 +63,18 @@ La trace s'écrit même quand l'appel échoue ou que tu l'interromps.
 Une limite : le texte libre. Ce que tu tapes dans une question, ce que tu écris dans ton code est recopié tel quel, et aucune machine ne sait y reconnaître un prénom. La règle est donc simple : on signe en équipe, jamais d'un prénom. L'historique git, lui, porte l'auteur de chaque commit ; il appartient aux membres de l'équipe et n'entre pas dans les traces.
 
 **À quoi cela sert.** Pendant la semaine, à retrouver une erreur de l'agent avec ses étapes sans avoir pensé à faire une capture, et à comparer ton agent d'un jour à l'autre. Après la semaine, `traces/`, `JOURNAL.md` et `equipe.toml` sont collectés dans chaque dépôt d'équipe pour monter un dossier de valorisation de la semaine, sans nom d'étudiant. Ne supprime pas `traces/` : pousse-le avec le reste.
+
+## Ce qu'un agent ouvert peut faire
+
+L'agent livré dans `equipe/agent.py` est un `CodeAgent` de smolagents, **ouvert** : à chaque étape, le modèle écrit du code Python, et ce code s'exécute sur ton portable, avec tes droits, sans que personne l'ait relu.
+
+- Ce code peut lire et écrire les fichiers de ton compte, et accéder au réseau. Ta clé d'API est un fichier de ton compte : un agent ouvert peut la lire comme n'importe quel autre. La vraie protection de la clé, c'est le plafond de dépense de ton équipe, et sa révocation.
+- Deux lignes de `equipe/agent.py` ouvrent les données à l'agent, chacune signalée par un commentaire : celle qui autorise son code à importer pandas, celle qui lui passe le tableau complet. Tant qu'elles sont là, les outils de ton équipe ne sont qu'une option parmi d'autres pour lui.
+- Retirer ces deux lignes **ferme** l'accès : l'agent écrit toujours du code, mais il n'atteint plus les données que par les outils de `equipe/outils/`. Fermer réduit ce qu'il peut faire ; ce n'est pas un bac à sable, et la documentation de smolagents le dit elle-même de son interpréteur.
+- Un outil qui rend le tableau lui-même rouvre tout. Un outil rend une valeur simple : un nombre, un texte, une courte liste.
+- Le bout de ce chemin : remplacer `CodeAgent` par `ToolCallingAgent`, qui n'exécute aucun code et n'appelle que les outils. Le kit a aussi un repli, `kit/boucle_maison.py`, une boucle d'outils qui n'exécute aucun code écrit par le modèle ; son mode d'emploi est en tête du fichier.
+- La seule isolation réelle est de faire tourner l'agent sur une machine distante, pas sur ton portable.
+
+Jusqu'où fermer est une décision de ton équipe, qu'elle justifie par ses scores.
+
+**Ce que coûte une question.** Chaque `uv run kit agent` affiche ses jetons et leur coût estimé. Par défaut, l'agent fait huit étapes au plus par question et ses sorties sont tronquées (`kit/reglages.toml`) : ce sont des réglages, pas des verrous. La seule vraie limite est la cagnotte de ton équipe. Quand elle est épuisée, le kit affiche « cagnotte épuisée », écrit la trace et ne retente rien : va voir Adrien.

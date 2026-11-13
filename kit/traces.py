@@ -37,6 +37,8 @@ from datetime import datetime, timezone
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
+from kit import cle
+from kit.cle import MOTIF_CLE
 from kit.controle import EQUIPE_VALIDE
 from kit.donnees import RACINE
 
@@ -52,10 +54,6 @@ CHAMPS_APPEL = (
 
 # Ce qui, dans equipe/, fait l'état du travail de l'équipe.
 CONTENU_ETAT = ("agent.py", "consigne.md", "outils", "questions")
-
-# Une clé d'API : celles d'Anthropic et de la plupart des fournisseurs
-# commencent par « sk- », celles de Hugging Face par « hf_ ».
-MOTIF_CLE = re.compile(r"\b(?:sk-[A-Za-z0-9_-]{20,}|hf_[A-Za-z0-9]{20,})")
 
 
 def maintenant():
@@ -89,9 +87,10 @@ def anonymiser(texte):
         motif = (r"[\\/]+" if dossier[0] in "\\/" else "") + r"[\\/]+".join(parties) + r"(?![\w-])"
         texte = re.sub(motif, "~", texte, flags=re.IGNORECASE)
     texte = MOTIF_CLE.sub("<clé>", texte)
-    cle = os.environ.get("ANTHROPIC_API_KEY", "").strip()
-    if len(cle) >= 8:  # la clé en usage, même si elle n'a pas la forme attendue
-        texte = texte.replace(cle, "<clé>")
+    # Les clés en usage, même si elles n'ont pas la forme attendue.
+    for en_usage in (cle.lire(), os.environ.get("ANTHROPIC_API_KEY", "").strip()):
+        if en_usage and len(en_usage) >= 8:
+            texte = texte.replace(en_usage, "<clé>")
     utilisateur = nom_utilisateur()
     if utilisateur and len(utilisateur) >= 2:  # en mot entier : « a » n'efface pas tous les « a »
         texte = re.sub(rf"(?<!\w){re.escape(utilisateur)}(?!\w)", "<utilisateur>", texte, flags=re.IGNORECASE)
@@ -101,7 +100,7 @@ def anonymiser(texte):
 def nettoyer(valeur):
     """Copie de valeur prête pour JSON : chaque texte anonymisé, tout objet inconnu mis en texte."""
     if isinstance(valeur, dict):
-        return {anonymiser(str(cle)): nettoyer(v) for cle, v in valeur.items()}
+        return {anonymiser(str(nom)): nettoyer(v) for nom, v in valeur.items()}
     if isinstance(valeur, (list, tuple)):
         return [nettoyer(v) for v in valeur]
     if valeur is None or isinstance(valeur, bool):
@@ -255,6 +254,7 @@ class Trace:
 
     def __init__(self, **champs):
         self.champs = {}
+        self.chemin = None  # le fichier de la trace, une fois écrit
         self.noter(**champs)
 
     def noter(self, **champs):
@@ -286,4 +286,4 @@ def appel(question, moteur, modele, racine=RACINE):
         raise
     finally:
         trace.noter(duree_s=round(time.monotonic() - chrono, 2))
-        ecrire_appel(trace.champs, racine, debut)
+        trace.chemin = ecrire_appel(trace.champs, racine, debut)

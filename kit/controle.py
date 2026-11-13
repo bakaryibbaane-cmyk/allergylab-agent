@@ -7,10 +7,11 @@ RÉUSSITE (code 0) ou ÉCHEC (code 1).
 
 import hashlib
 import re
+import subprocess
 import tempfile
 import tomllib
 
-from kit import donnees
+from kit import cle, donnees
 
 RACINE = donnees.RACINE
 EQUIPE_VALIDE = re.compile(r"accueil|equipe-[1-9]")
@@ -136,6 +137,63 @@ def verifier_traces(racine):
     return True, "traces : dossier traces/ inscriptible", None
 
 
+def fichiers_du_depot(racine):
+    """Les fichiers suivis par git, et ceux qu'un `git add .` ajouterait. None sans git ou hors d'un dépôt."""
+    try:
+        resultat = subprocess.run(
+            ["git", "--no-optional-locks", "ls-files", "-z", "--cached", "--others", "--exclude-standard"],
+            cwd=racine, capture_output=True, timeout=30,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if resultat.returncode != 0:
+        return None
+    return sorted({nom for nom in resultat.stdout.decode("utf-8", errors="replace").split("\0") if nom})
+
+
+def verifier_cle_hors_depot(racine):
+    """Aucun fichier du dépôt, suivi ou prêt à l'être, ne contient ce qui ressemble à une clé d'API."""
+    noms = fichiers_du_depot(racine)
+    if noms is None:
+        return True, "clé dans le dépôt : pas de dépôt git ici, rien ne peut partir dans un commit", None
+    en_usage = cle.lire()
+    suspects = []
+    for nom in noms:
+        try:
+            texte = (racine / nom).read_bytes().decode("utf-8", errors="ignore")
+        except OSError:
+            continue  # un fichier supprimé, pas encore enregistré
+        if cle.MOTIF_CLE.search(texte) or (en_usage and len(en_usage) >= 8 and en_usage in texte):
+            suspects.append(nom)
+    if suspects:
+        return (
+            False,
+            f"clé dans le dépôt : {', '.join(suspects)} contient ce qui ressemble à une clé d'API.",
+            "retire la clé de ce fichier avant tout commit ; elle vit dans ton dossier personnel, "
+            "où uv run kit cle la range. Si elle est déjà poussée, préviens l'animateur : elle doit être révoquée.",
+        )
+    return True, f"clé dans le dépôt : aucune, dans les {len(noms)} fichiers suivis ou prêts à l'être", None
+
+
+def verifier_cle():
+    """Une clé est enregistrée, dans le dossier personnel ou dans la variable ALLERGYLAB_CLE."""
+    valeur, provenance = cle.trouver()
+    if not valeur:
+        return False, "clé d'API : absente.", "lance uv run kit cle, puis colle la clé que l'animateur t'a donnée."
+    return True, f"clé d'API : présente ({provenance})", None
+
+
+def verifier_appel():
+    """Un appel minimal au modèle du développement aboutit."""
+    from kit import modele  # importé ici seulement : litellm est long à charger, et --hors-ligne s'en passe
+
+    try:
+        identifiant, jetons, cout = modele.essai()
+    except modele.ErreurModele as erreur:
+        return False, f"appel au modèle : {erreur.texte}", erreur.que_faire
+    return True, f"appel au modèle : {identifiant} a répondu ({jetons} jetons, coût estimé {modele.en_dollars(cout)})", None
+
+
 def afficher(bon, texte, que_faire):
     print(f"  {'OK   ' if bon else 'ÉCHEC'}  {texte}")
     if not bon:
@@ -161,10 +219,18 @@ def controler(racine=RACINE, hors_ligne=False):
     for ligne in suite:
         afficher(*ligne)
     lignes += suite
+    lignes.append(verifier_cle_hors_depot(racine))
+    afficher(*lignes[-1])
     if hors_ligne:
-        print("  --     appel au modèle : sauté (--hors-ligne)")
+        print("  --     clé d'API et appel au modèle : non vérifiés (--hors-ligne)")
     else:
-        print("  --     appel au modèle : pas encore disponible dans cette version du kit")
+        lignes.append(verifier_cle())
+        afficher(*lignes[-1])
+        if lignes[-1][0]:
+            lignes.append(verifier_appel())
+            afficher(*lignes[-1])
+        else:
+            print("  --     appel au modèle : non tenté, faute de clé")
     reussi = all(bon for bon, _, _ in lignes)
     print("RÉUSSITE" if reussi else "ÉCHEC")
     return 0 if reussi else 1

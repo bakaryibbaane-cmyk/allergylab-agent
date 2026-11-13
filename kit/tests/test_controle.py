@@ -98,7 +98,7 @@ def test_installer_reussit(capsys):
 def test_aide_et_codes_de_sortie(capsys):
     assert cli.main([]) == 0
     aide = capsys.readouterr().out
-    assert "installer" in aide and "controle" in aide
+    assert all(verbe in aide for verbe in ("installer", "cle", "controle", "agent"))
     assert cli.main(["inconnu"]) == 1
     assert cli.main(["controle", "--inconnue"]) == 1
 

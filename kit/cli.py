@@ -9,13 +9,15 @@ import sys
 import traceback
 from importlib.metadata import version
 
-from kit import controle
+from kit import cle, controle
 
 AIDE = """Kit AllergyLab. Usage : uv run kit <commande>
 
-  installer                 installe le kit et vérifie les données
+  installer                 installe le kit, vérifie les données, demande la clé
+  cle                       enregistre ou remplace la clé d'API
   controle                  vérifie l'installation point par point
   controle --hors-ligne     la même chose, sans appeler le modèle
+  agent "question"          pose une question à l'agent de l'équipe
 
 Ajoute --detail à une commande pour voir le détail d'une erreur inattendue."""
 
@@ -28,7 +30,7 @@ def regler_console():
 
 
 def installer(options):
-    """Python et les dépendances sont déjà installés par `uv run` ; on le confirme."""
+    """Python et les dépendances sont déjà installés par `uv run` ; on le confirme, puis la clé."""
     print("Installation du kit AllergyLab")
     print(f"  OK     Python {platform.python_version()}")
     paquets = ", ".join(f"{nom} {version(nom)}" for nom in ("pandas", "smolagents", "anthropic"))
@@ -36,7 +38,8 @@ def installer(options):
     lignes = controle.verifier_donnees(controle.RACINE, controle.lire_attendu(controle.RACINE))
     for ligne in lignes:
         controle.afficher(*ligne)
-    if all(bon for bon, _, _ in lignes):
+    cle_acceptee = cle.installer()  # la demande si elle manque, et seulement dans un terminal
+    if all(bon for bon, _, _ in lignes) and cle_acceptee:
         print("Installation terminée. Étape suivante : uv run kit controle")
         return 0
     print("Installation incomplète : corrige la ligne en échec, puis relance uv run kit installer.")
@@ -47,10 +50,26 @@ def verifier(options):
     return controle.controler(hors_ligne="--hors-ligne" in options)
 
 
-# Chaque verbe : la fonction qui le traite, et les options qu'il accepte.
+def enregistrer_cle(options):
+    return cle.commande()
+
+
+def agent(mots):
+    if not mots:
+        print('Il manque la question, entre guillemets : uv run kit agent "Combien de lignes compte le tableau ?"')
+        return 1
+    from kit import question  # importé ici seulement : smolagents et litellm sont longs à charger
+
+    return question.poser(" ".join(mots))
+
+
+# Chaque verbe : la fonction qui le traite, et les options qu'il accepte
+# (None : le verbe prend un texte libre, la question).
 VERBES = {
     "installer": (installer, []),
+    "cle": (enregistrer_cle, []),
     "controle": (verifier, ["--hors-ligne"]),
+    "agent": (agent, None),
 }
 
 
@@ -68,7 +87,7 @@ def main(argv=None):
         print(AIDE)
         return 1
     fonction, permises = VERBES[verbe]
-    inconnues = [o for o in options if o not in permises]
+    inconnues = [o for o in options if permises is not None and o not in permises]
     if inconnues:
         print(f"Option inconnue pour {verbe} : {' '.join(inconnues)}. Lance uv run kit pour voir les options.")
         return 1

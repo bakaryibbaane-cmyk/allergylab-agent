@@ -69,6 +69,8 @@ def test_fichiers_texte_ouverts_en_utf8():
             if not isinstance(noeud, ast.Call):
                 continue
             nom = getattr(noeud.func, "attr", getattr(noeud.func, "id", None))
+            if getattr(getattr(noeud.func, "value", None), "id", None) == "os":
+                continue  # os.open rend un descripteur, sans encodage ; c'est open() qui le lit ou l'écrit
             mode = [a.value for a in noeud.args[1:2] if isinstance(a, ast.Constant)]
             if nom in ("open", "read_text", "write_text") and not any("b" in m for m in mode):
                 cles = {mot.arg for mot in noeud.keywords}
@@ -90,3 +92,42 @@ def test_aucune_adresse_electronique():
             continue
         texte = fichier.read_bytes().decode("utf-8", errors="ignore")
         assert not adresse.search(texte), fichier
+
+
+def modeles_valides():
+    """La liste MODELES de kit/tester-la-stack.py : les identifiants que ce script valide."""
+    arbre = ast.parse((RACINE / "kit" / "tester-la-stack.py").read_text(encoding="utf-8"))
+    for noeud in arbre.body:
+        if isinstance(noeud, ast.Assign) and getattr(noeud.targets[0], "id", None) == "MODELES":
+            return ast.literal_eval(noeud.value)
+    raise AssertionError("MODELES introuvable dans tester-la-stack.py")
+
+
+def test_deux_modeles_dans_les_reglages():
+    reglages = tomllib.loads((RACINE / "kit" / "reglages.toml").read_text(encoding="utf-8"))
+    modeles = reglages["modeles"]
+    assert set(modeles) == {"developpement", "officiel"}
+    assert sorted(m["identifiant"] for m in modeles.values()) == sorted(modeles_valides())
+    assert all(m["entree"] > 0 and m["sortie"] > 0 for m in modeles.values())
+    assert reglages["agent"]["etapes_max"] == 8
+    re.compile(reglages["limite"]["motif"])
+
+
+def test_un_seul_module_parle_au_modele():
+    # Seul kit/modele.py importe un client du modèle ou écrit un identifiant de modèle.
+    for fichier in (RACINE / "kit").rglob("*.py"):
+        relatif = fichier.relative_to(RACINE).as_posix()
+        if fichier.name in SCRIPTS_FOURNIS or "tests" in fichier.parts or relatif == "kit/modele.py":
+            continue
+        for noeud in ast.walk(ast.parse(fichier.read_text(encoding="utf-8"))):
+            if isinstance(noeud, ast.Import):
+                modules = [alias.name for alias in noeud.names]
+            elif isinstance(noeud, ast.ImportFrom):
+                modules = [noeud.module or ""] + [f"{noeud.module}.{alias.name}" for alias in noeud.names]
+            else:
+                modules = []
+            for module in modules:
+                assert not module.startswith(("anthropic", "litellm")), f"{relatif} importe {module}"
+                assert not module.endswith("Model"), f"{relatif} importe {module}"
+            if isinstance(noeud, ast.Constant) and isinstance(noeud.value, str):
+                assert "claude-" not in noeud.value, f"{relatif}, ligne {noeud.lineno} : identifiant de modèle"
