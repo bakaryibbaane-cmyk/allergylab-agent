@@ -23,8 +23,12 @@ from kit.donnees import RACINE
 
 VARIABLE = "ALLERGYLAB_CLE"
 
+# Le début d'une clé d'API d'Anthropic. Écrit en deux morceaux : ainsi une
+# recherche de ce début dans les fichiers du dépôt ne trouve que de vraies fuites.
+PREFIXE = "sk-" + "ant-"
+
 # La forme d'une clé d'API d'Anthropic.
-FORME = re.compile(r"sk-ant-[A-Za-z0-9_-]{20,}")
+FORME = re.compile(PREFIXE + r"[A-Za-z0-9_-]{20,}")
 
 # Tout ce qui ressemble à une clé d'API : celles d'Anthropic et de la plupart
 # des fournisseurs commencent par « sk- », celles de Hugging Face par « hf_ ».
@@ -92,7 +96,7 @@ def enregistrer(texte):
     cle = texte.strip()
     if not FORME.fullmatch(cle):
         raise CleRefusee(
-            "ce texte n'a pas la forme d'une clé d'API, qui commence par sk-ant- et ne contient "
+            f"ce texte n'a pas la forme d'une clé d'API, qui commence par {PREFIXE} et ne contient "
             "pas d'espace. Recopie la clé en entier, puis relance uv run kit cle."
         )
     chemin = fichier()

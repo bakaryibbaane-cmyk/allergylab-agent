@@ -56,7 +56,7 @@ def test_fichier_puis_variable(monkeypatch):
     assert cle.trouver() == (FAUSSE_CLE, "fichier du dossier personnel")  # uv run kit cle a le dernier mot
 
 
-@pytest.mark.parametrize("texte", ["", "bonjour", "sk-ant-court", f"{FAUSSE_CLE} {FAUSSE_CLE}", "hf_" + "x" * 30])
+@pytest.mark.parametrize("texte", ["", "bonjour", "sk-" + "ant-court",f"{FAUSSE_CLE} {FAUSSE_CLE}", "hf_" + "x" * 30])
 def test_cle_mal_formee_refusee(texte):
     with pytest.raises(cle.CleRefusee, match="forme d'une clé"):
         cle.enregistrer(texte)
