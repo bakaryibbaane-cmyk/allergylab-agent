@@ -115,3 +115,19 @@ def test_erreur_inattendue_sans_trace_python(monkeypatch, capsys):
 
     assert cli.main(["controle", "--detail"]) == 1
     assert "Traceback" in capsys.readouterr().err
+
+
+def test_traces_non_inscriptibles(copie, capsys):
+    # Un fichier à la place du dossier : le cas se reproduit sur les trois systèmes.
+    (copie / "traces").write_text("pas un dossier", encoding="utf-8")
+    assert controle.controler(copie, hors_ligne=True) == 1
+    sortie = capsys.readouterr().out
+    assert "traces : le kit ne peut pas écrire dans le dossier traces/." in sortie
+    assert "Que faire : vérifie que traces/ est un dossier" in sortie
+    assert derniere_ligne(sortie) == "ÉCHEC"
+
+
+def test_controle_ne_laisse_aucun_fichier(copie, capsys):
+    assert controle.controler(copie, hors_ligne=True) == 0
+    assert "traces : dossier traces/ inscriptible" in capsys.readouterr().out
+    assert list((copie / "traces").iterdir()) == []

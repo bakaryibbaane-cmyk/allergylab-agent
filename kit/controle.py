@@ -7,6 +7,7 @@ RÉUSSITE (code 0) ou ÉCHEC (code 1).
 
 import hashlib
 import re
+import tempfile
 import tomllib
 
 from kit import donnees
@@ -118,6 +119,23 @@ def verifier_equipe(racine):
     return True, f"équipe : {equipe}", None
 
 
+def verifier_traces(racine):
+    """Le kit peut écrire dans traces/ : il y crée un fichier provisoire, aussitôt effacé."""
+    dossier = racine / "traces"
+    try:
+        dossier.mkdir(exist_ok=True)
+        with tempfile.TemporaryFile(dir=dossier):
+            pass
+    except OSError:
+        return (
+            False,
+            "traces : le kit ne peut pas écrire dans le dossier traces/.",
+            "vérifie que traces/ est un dossier et que le dépôt n'est pas en lecture seule ; "
+            "sinon, clone le dépôt à nouveau dans ton dossier personnel, hors de OneDrive ou iCloud.",
+        )
+    return True, "traces : dossier traces/ inscriptible", None
+
+
 def afficher(bon, texte, que_faire):
     print(f"  {'OK   ' if bon else 'ÉCHEC'}  {texte}")
     if not bon:
@@ -137,7 +155,9 @@ def controler(racine=RACINE, hors_ligne=False):
     for ligne in lignes:
         afficher(*ligne)
     ligne_tableau, tableau = verifier_tableau(racine, attendu)
-    suite = [ligne_tableau, verifier_dictionnaire(racine, tableau), verifier_equipe(racine)]
+    suite = [
+        ligne_tableau, verifier_dictionnaire(racine, tableau), verifier_equipe(racine), verifier_traces(racine),
+    ]
     for ligne in suite:
         afficher(*ligne)
     lignes += suite
