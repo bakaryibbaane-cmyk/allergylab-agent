@@ -1,0 +1,30 @@
+[project]
+name = "allergylab-kit"
+version = "0.1.0"
+description = "Kit de démarrage AllergyLab : un harnais pour construire un agent d'analyse de données de santé."
+readme = "README.md"
+requires-python = "==3.12.*"
+dependencies = [
+    "anthropic",
+    "pandas",
+    "smolagents[litellm]==1.26.0",
+]
+
+[dependency-groups]
+dev = ["pytest"]
+
+# La commande `uv run kit …` appelle la fonction main de kit/cli.py.
+[project.scripts]
+kit = "kit.cli:main"
+
+[build-system]
+requires = ["uv_build>=0.9,<0.12"]
+build-backend = "uv_build"
+
+# Le paquet kit/ est à la racine du dépôt, pas dans un dossier src/.
+[tool.uv.build-backend]
+module-name = "kit"
+module-root = ""
+
+[tool.pytest.ini_options]
+testpaths = ["kit/tests"]

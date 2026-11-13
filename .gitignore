@@ -1,0 +1,11 @@
+# Environnement Python, recréé par uv à chaque `uv run`.
+.venv/
+__pycache__/
+.pytest_cache/
+
+# Fichiers que les systèmes ajoutent d'eux-mêmes.
+.DS_Store
+Thumbs.db
+
+# Jamais de secret dans le dépôt : la clé d'API vit hors de ce dossier.
+.env
