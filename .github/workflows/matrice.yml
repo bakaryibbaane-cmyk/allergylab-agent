@@ -81,52 +81,88 @@ jobs:
         run: |
           import socket
           import sys
+          import tempfile
+          import time
           import traceback
+          from pathlib import Path
 
           sys.path.insert(0, "kit/tests")
           sys.stdout.reconfigure(encoding="utf-8")
 
           import httpx
           import httpx2
+          import pytest
 
           import conftest
-          from kit import modele
+          from kit import cle, modele
 
           import litellm
 
+          # 1. Les erreurs d'origine, avant que litellm puis le kit ne les traduisent.
+          for module in (litellm, litellm.main, litellm.utils):
+              vraie = getattr(module, "exception_type", None)
+              if vraie is not None:
+                  def bavarde(*arguments, vraie=vraie, **options):
+                      origine = options.get("original_exception") or next(
+                          (a for a in arguments if isinstance(a, BaseException)), None
+                      )
+                      print("--- erreur d'origine, vue par litellm :")
+                      if origine is not None:
+                          traceback.print_exception(origine, file=sys.stdout)
+                      sys.stdout.flush()
+                      return vraie(*arguments, **options)
+
+                  setattr(module, "exception_type", bavarde)
+
+          vraie_traduction = modele.traduire
+
+
+          def traduction_bavarde(erreur):
+              print("--- erreur reçue par le kit :", type(erreur).__name__, str(erreur)[:1500])
+              traceback.print_exception(erreur, file=sys.stdout)
+              sys.stdout.flush()
+              return vraie_traduction(erreur)
+
+
+          modele.traduire = traduction_bavarde
+
+          # 2. Le test en échec, tel quel, dans pytest.
+          print("=== dans pytest")
+          sys.stdout.flush()
+          code = pytest.main(["-q", "-s", "-p", "no:cacheprovider", "kit/tests/test_erreurs.py::test_controle_appel_minimal"])
+          print(f"code de pytest : {code}")
+          code = pytest.main(["-q", "-s", "-p", "no:cacheprovider", "kit/tests/test_cle.py", "-k", "cle_en_parametre"])
+          print(f"code de pytest, second essai : {code}")
+
+          # 3. Hors de pytest, un facteur à la fois.
+          maison = Path(tempfile.mkdtemp())
+          cle.fichier = lambda: maison / ".allergylab" / "cle"
+          cle.enregistrer(conftest.FAUSSE_CLE)
           faux = conftest.FauxModele()
           httpx.Client.send = lambda client, requete, **_: faux.envoyer(client, requete)
           httpx2.Client.send = lambda client, requete, **_: faux.envoyer(client, requete)
 
 
-          def garde(prise, adresse, *arguments):
-              print(f"--- connexion tentée vers {adresse!r}, depuis :")
-              traceback.print_stack(limit=30, file=sys.stdout)
-              return conftest.refuser_le_reseau(prise, adresse, *arguments)
-
-
           def essai(nom):
               print(f"=== {nom}")
               faux.programmer(conftest.message("prêt"))
+              modele.journal_neuf()
               try:
-                  litellm.completion(
-                      model="anthropic/" + modele.choisi()["identifiant"],
-                      messages=[{"role": "user", "content": "prêt ?"}],
-                      api_key=conftest.FAUSSE_CLE,
-                      max_tokens=16,
-                  )
-                  print(f"réponse reçue ; appels au faux modèle : {faux.appels}")
+                  print("résultat :", modele.essai(), "; appels :", faux.appels)
               except BaseException as erreur:
-                  traceback.print_exc(file=sys.stdout)
-                  while erreur is not None:
-                      print("cause :", type(erreur).__name__, str(erreur)[:1500])
-                      erreur = erreur.__cause__ or erreur.__context__
+                  print("échec :", type(erreur).__name__)
               sys.stdout.flush()
 
 
-          essai("sans garde-réseau")
-          socket.socket.connect = garde
-          essai("avec garde-réseau")
+          essai("ModeleKit, sans rien d'autre")
+          vraie_pause = time.sleep
+          time.sleep = lambda secondes: None
+          essai("ModeleKit, pause neutralisée")
+          time.sleep = vraie_pause
+          socket.socket.connect = conftest.refuser_le_reseau
+          essai("ModeleKit, garde-réseau")
+          time.sleep = lambda secondes: None
+          essai("ModeleKit, garde-réseau et pause neutralisée")
 
       # --- Avec clé : seulement à la main ---------------------------------
 
