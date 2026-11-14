@@ -73,6 +73,61 @@ jobs:
       - name: uv run pytest -q
         run: uv run pytest -q
 
+      # PROVISOIRE : montre l'erreur réelle d'un appel au faux modèle sous
+      # Windows, que les tests ne laissent pas voir. À retirer une fois corrigé.
+      - name: Diagnostic provisoire
+        if: failure() && runner.os == 'Windows'
+        shell: uv run python {0}
+        run: |
+          import socket
+          import sys
+          import traceback
+
+          sys.path.insert(0, "kit/tests")
+          sys.stdout.reconfigure(encoding="utf-8")
+
+          import httpx
+          import httpx2
+
+          import conftest
+          from kit import modele
+
+          import litellm
+
+          faux = conftest.FauxModele()
+          httpx.Client.send = lambda client, requete, **_: faux.envoyer(client, requete)
+          httpx2.Client.send = lambda client, requete, **_: faux.envoyer(client, requete)
+
+
+          def garde(prise, adresse, *arguments):
+              print(f"--- connexion tentée vers {adresse!r}, depuis :")
+              traceback.print_stack(limit=30, file=sys.stdout)
+              return conftest.refuser_le_reseau(prise, adresse, *arguments)
+
+
+          def essai(nom):
+              print(f"=== {nom}")
+              faux.programmer(conftest.message("prêt"))
+              try:
+                  litellm.completion(
+                      model="anthropic/" + modele.choisi()["identifiant"],
+                      messages=[{"role": "user", "content": "prêt ?"}],
+                      api_key=conftest.FAUSSE_CLE,
+                      max_tokens=16,
+                  )
+                  print(f"réponse reçue ; appels au faux modèle : {faux.appels}")
+              except BaseException as erreur:
+                  traceback.print_exc(file=sys.stdout)
+                  while erreur is not None:
+                      print("cause :", type(erreur).__name__, str(erreur)[:1500])
+                      erreur = erreur.__cause__ or erreur.__context__
+              sys.stdout.flush()
+
+
+          essai("sans garde-réseau")
+          socket.socket.connect = garde
+          essai("avec garde-réseau")
+
       # --- Avec clé : seulement à la main ---------------------------------
 
       - name: uv run kit controle
