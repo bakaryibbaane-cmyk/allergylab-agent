@@ -1,0 +1,132 @@
+# La matrice : elle rejoue l'installation du kit sur trois systèmes, à partir
+# d'une machine vierge (SPEC § 9). Elle dit où l'installation est prouvée.
+#
+# - À chaque push sur main : la partie sans clé, qui n'appelle pas le modèle.
+# - À la main, avec l'entrée avec_cle : la même, plus la partie qui appelle le
+#   modèle. Elle consomme des jetons, donc elle ne part jamais toute seule.
+
+name: matrice
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      avec_cle:
+        description: "Jouer aussi la partie qui appelle le modèle (elle consomme des jetons)"
+        type: boolean
+        default: false
+
+# Le strict nécessaire : lire le code. La matrice n'écrit rien dans le dépôt.
+permissions:
+  contents: read
+
+env:
+  # Le seul Python est celui que uv télécharge, comme sur une machine vierge :
+  # celui que l'image du système apporte est ignoré.
+  UV_PYTHON_PREFERENCE: only-managed
+
+jobs:
+  systeme:
+    name: ${{ matrix.systeme }}
+    runs-on: ${{ matrix.systeme }}
+    timeout-minutes: 20
+    strategy:
+      # Un système en échec n'arrête pas les deux autres : on veut les trois résultats.
+      fail-fast: false
+      matrix:
+        systeme: [macos-latest, windows-latest, ubuntu-latest]
+
+    steps:
+      # Sous Windows, git convertit les fins de ligne comme sur le poste d'un
+      # étudiant. Si les fichiers de donnees/ gardent leur empreinte malgré ce
+      # réglage, c'est que .gitattributes les protège.
+      - name: Régler git comme sur un poste Windows
+        if: runner.os == 'Windows'
+        run: git config --global core.autocrlf true
+
+      # Les actions sont épinglées par l'empreinte de leur commit, pas par une
+      # étiquette qu'on pourrait déplacer.
+      - name: Récupérer le code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Installer uv
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          # Aucun cache : chaque exécution repart de zéro.
+          enable-cache: false
+
+      # --- Sans clé : à chaque push ---------------------------------------
+
+      # Sans terminal interactif, installer lit la clé dans la variable
+      # ALLERGYLAB_CLE. Elle reste vide tant que avec_cle n'est pas coché.
+      - name: uv run kit installer
+        env:
+          ALLERGYLAB_CLE: ${{ inputs.avec_cle && secrets.ALLERGYLAB_CLE || '' }}
+        run: uv run kit installer
+
+      - name: uv run kit controle --hors-ligne
+        run: uv run kit controle --hors-ligne
+
+      - name: uv run pytest -q
+        run: uv run pytest -q
+
+      # --- Avec clé : seulement à la main ---------------------------------
+
+      - name: uv run kit controle
+        if: inputs.avec_cle
+        env:
+          ALLERGYLAB_CLE: ${{ secrets.ALLERGYLAB_CLE }}
+        run: uv run kit controle
+
+      - name: uv run kit agent
+        if: inputs.avec_cle
+        env:
+          ALLERGYLAB_CLE: ${{ secrets.ALLERGYLAB_CLE }}
+        run: uv run kit agent "Combien de lignes compte le tableau ?"
+
+      # La question a dû laisser exactement une trace, et une trace valide.
+      # Le script tourne avec le Python du kit, sans la clé.
+      - name: Vérifier la trace
+        if: inputs.avec_cle
+        shell: uv run python {0}
+        run: |
+          import json
+          import sys
+          from pathlib import Path
+
+          from kit.cle import MOTIF_CLE
+          from kit.reponse import valider
+          from kit.traces import CHAMPS_APPEL, FORMAT_APPEL
+
+          sys.stdout.reconfigure(encoding="utf-8")
+
+          fichiers = sorted((Path("traces") / "appels").glob("*/*.json"))
+          if len(fichiers) != 1:
+              sys.exit(f"ÉCHEC : traces/appels/ contient {len(fichiers)} fichiers, il en faut exactement un.")
+          texte = fichiers[0].read_text(encoding="utf-8")
+          trace = json.loads(texte)
+
+          defauts = []
+          if tuple(trace) != CHAMPS_APPEL:
+              defauts.append("les champs ne sont pas ceux de la liste fermée")
+          if trace.get("format") != FORMAT_APPEL:
+              defauts.append("la version du format n'est pas la bonne")
+          if trace.get("erreur") is not None:
+              defauts.append("la trace porte une erreur")
+          try:
+              valider(trace.get("reponse"))
+          except Exception as erreur:
+              defauts.append(f"la réponse ne respecte pas le contrat ({type(erreur).__name__})")
+          if not trace.get("etat") or not (Path("traces") / "etats" / str(trace.get("etat"))).is_dir():
+              defauts.append("l'état cité n'est pas dans traces/etats/")
+          if MOTIF_CLE.search(texte):
+              defauts.append("la trace contient ce qui ressemble à une clé d'API")
+          if str(Path.home()) in texte:
+              defauts.append("la trace contient le chemin du dossier personnel")
+
+          if defauts:
+              sys.exit("ÉCHEC : " + " ; ".join(defauts) + ".")
+          print(f"RÉUSSITE : une trace valide, {fichiers[0].name}")
