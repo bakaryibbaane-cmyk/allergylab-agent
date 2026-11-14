@@ -59,8 +59,20 @@ def fichier():
 def interactif():
     """Vrai si quelqu'un peut taper au clavier dans ce terminal."""
     try:
-        return sys.stdin is not None and sys.stdin.isatty()
-    except (AttributeError, ValueError):
+        if sys.stdin is None or not sys.stdin.isatty():
+            return False
+        if sys.platform != "win32":
+            return True
+        # Sous Windows, isatty() dit vrai aussi pour le périphérique nul (une
+        # entrée redirigée vers NUL) : le kit attendrait une clé que personne
+        # ne peut taper. Seule une vraie console a un mode de console.
+        import ctypes
+        import msvcrt
+
+        poignee = ctypes.c_void_p(msvcrt.get_osfhandle(sys.stdin.fileno()))
+        mode = ctypes.c_uint32()
+        return bool(ctypes.windll.kernel32.GetConsoleMode(poignee, ctypes.byref(mode)))
+    except (AttributeError, OSError, ValueError):
         return False
 
 
