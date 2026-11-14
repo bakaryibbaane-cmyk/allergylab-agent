@@ -228,7 +228,9 @@ def test_etat_copie_une_fois(racine):
 def test_etat_independant_des_fins_de_ligne(racine):
     agent = racine / "equipe" / "agent.py"
     avant = traces.empreinte_etat(traces.lire_etat(racine / "equipe"))
-    agent.write_bytes(agent.read_bytes().replace(b"\n", b"\r\n"))
+    # Sous Windows, le fichier de départ est déjà en CRLF : on repart de LF.
+    en_lf = agent.read_bytes().replace(b"\r\n", b"\n")
+    agent.write_bytes(en_lf.replace(b"\n", b"\r\n"))
     assert traces.empreinte_etat(traces.lire_etat(racine / "equipe")) == avant
 
 

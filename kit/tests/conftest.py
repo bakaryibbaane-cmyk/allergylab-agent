@@ -137,7 +137,14 @@ class FauxModele:
         return bibliotheque.Response(statut, json=corps, request=requete)
 
 
-def refuser_le_reseau(*arguments, **options):
+CONNEXION_REELLE = socket.socket.connect
+
+
+def refuser_le_reseau(prise, adresse, *arguments):
+    # Sous Windows, Python relie deux prises de la machine entre elles pour ses
+    # propres besoins (socket.socketpair, dans asyncio) : ce n'est pas le réseau.
+    if isinstance(adresse, tuple) and adresse[0] in ("127.0.0.1", "::1"):
+        return CONNEXION_REELLE(prise, adresse, *arguments)
     raise RuntimeError("Un test a tenté une connexion réseau.")
 
 
