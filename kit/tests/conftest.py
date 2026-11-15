@@ -14,7 +14,6 @@ import sys
 
 import httpx
 import httpx2
-import litellm
 import pytest
 
 from kit import cle
@@ -158,10 +157,6 @@ def faux_modele(monkeypatch):
     monkeypatch.setattr(httpx.Client, "send", lambda client, requete, **_: faux.envoyer(client, requete))
     monkeypatch.setattr(httpx2.Client, "send", lambda client, requete, **_: faux.envoyer(client, requete))
     monkeypatch.setattr(modele.time, "sleep", faux.attentes.append)
-    # litellm charge un tokenizer à son premier appel. Sous Windows, il le
-    # télécharge : les tests lui en donnent un faux, qui ne sert à rien tant que
-    # le faux modèle annonce lui-même ses jetons.
-    monkeypatch.setattr(litellm.main, "_encoding_cache", object())
     modele.journal_neuf()
     return faux
 
