@@ -11,7 +11,7 @@ Il faut deux outils sur la machine : git et uv. Clone le dépôt dans ton dossie
 ```
 uv run kit installer
 uv run kit controle
-uv run kit agent "<ta question>"
+uv run kit agent "Combien de lignes compte le tableau ?"
 ```
 
 `uv run kit` seul affiche la liste des commandes. Chaque commande rend le code 0 quand tout va bien, 1 sinon. Tout passe par `uv run` : pas d'environnement virtuel à activer, pas de `pip`.

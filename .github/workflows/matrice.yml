@@ -87,7 +87,8 @@ jobs:
           ALLERGYLAB_CLE: ${{ secrets.ALLERGYLAB_CLE }}
         run: uv run kit agent "Combien de lignes compte le tableau ?"
 
-      # La question a dû laisser exactement une trace, et une trace valide.
+      # La question a dû laisser exactement une trace, une trace valide, et la
+      # bonne réponse.
       # Le script tourne avec le Python du kit, sans la clé.
       - name: Vérifier la trace
         if: inputs.avec_cle
@@ -116,10 +117,22 @@ jobs:
               defauts.append("la version du format n'est pas la bonne")
           if trace.get("erreur") is not None:
               defauts.append("la trace porte une erreur")
+          reponse = None
           try:
-              valider(trace.get("reponse"))
+              reponse = valider(trace.get("reponse"))
           except Exception as erreur:
               defauts.append(f"la réponse ne respecte pas le contrat ({type(erreur).__name__})")
+          # La question porte sur la forme du tableau, déjà publiée (SPEC § 4) :
+          # l'agent doit répondre, et donner 4 271 lignes.
+          if reponse is not None:
+              if reponse["statut"] != "reponse":
+                  defauts.append(f"le statut de la réponse vaut {reponse['statut']!r}, il faut 'reponse'")
+              try:
+                  nombre = float(reponse["valeur"])
+              except (TypeError, ValueError):
+                  nombre = None
+              if nombre != 4271:
+                  defauts.append(f"la valeur de la réponse vaut {reponse['valeur']!r}, il faut 4271")
           if not trace.get("etat") or not (Path("traces") / "etats" / str(trace.get("etat"))).is_dir():
               defauts.append("l'état cité n'est pas dans traces/etats/")
           if MOTIF_CLE.search(texte):

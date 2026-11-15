@@ -33,7 +33,7 @@ Chaque exigence de cette spec sert ce scénario ou la collecte des traces (§ 7)
 
 ## 2. Prérequis et machine vierge
 
-Deux outils, installés par chaque étudiant avant lundi : **git** et **uv**. La liste est partie le 12 novembre.
+Deux outils, installés par chaque étudiant avant lundi : **git** et **uv**. Ils en reçoivent la marche à suivre par mail.
 
 Pourquoi uv. Il s'installe dans le dossier de l'utilisateur, de la même façon sur les trois systèmes, et il télécharge lui-même la bonne version de Python. Personne n'installe Python à la main, personne n'active d'environnement virtuel : toutes les commandes passent par `uv run`. Un animateur seul n'a qu'une procédure à dépanner.
 
