@@ -22,6 +22,7 @@ estimé ; l'agent y ajoute ses étapes. `kit agent` affiche ce journal et
 l'écrit dans la trace.
 """
 
+import hashlib
 import os
 import re
 import time
@@ -34,6 +35,7 @@ os.environ.setdefault("LITELLM_LOCAL_MODEL_COST_MAP", "True")
 
 import anthropic  # noqa: E402
 import litellm  # noqa: E402
+import tiktoken.load  # noqa: E402
 from smolagents import LiteLLMModel  # noqa: E402
 
 from kit import cle  # noqa: E402
@@ -43,6 +45,31 @@ from kit import cle  # noqa: E402
 litellm.drop_params = True
 # Pas de bandeau de litellm à chaque erreur : le kit dit lui-même quoi faire.
 litellm.suppress_debug_info = True
+
+# litellm compte les jetons avec tiktoken. Il embarque une copie du tokenizer
+# et dit à tiktoken de la chercher dans son dossier (TIKTOKEN_CACHE_DIR). Dans
+# la roue Windows de litellm, cette copie a des fins de ligne CRLF : son
+# empreinte n'est plus celle qu'attend tiktoken, qui la supprime et va la
+# télécharger sur openaipublic.blob.core.windows.net. Le kit ne doit dépendre
+# que de l'API d'Anthropic : tiktoken lit donc la copie, fins de ligne
+# ramenées à LF, et ne télécharge rien si l'empreinte est alors la bonne.
+lire_en_cache = tiktoken.load.read_file_cached
+
+
+def lire_copie_embarquee(adresse, empreinte=None):
+    """Le fichier que tiktoken irait télécharger, lu dans la copie de litellm quand elle a la bonne empreinte."""
+    dossier = os.environ.get("TIKTOKEN_CACHE_DIR")
+    if dossier and empreinte:
+        # Le nom que tiktoken donne à sa copie : l'empreinte SHA-1 de l'adresse.
+        copie = Path(dossier) / hashlib.sha1(adresse.encode(), usedforsecurity=False).hexdigest()
+        if copie.is_file():
+            contenu = copie.read_bytes().replace(b"\r\n", b"\n")
+            if tiktoken.load.check_hash(contenu, empreinte):
+                return contenu
+    return lire_en_cache(adresse, empreinte)
+
+
+tiktoken.load.read_file_cached = lire_copie_embarquee
 
 REGLAGES = tomllib.loads((Path(__file__).parent / "reglages.toml").read_text(encoding="utf-8"))
 

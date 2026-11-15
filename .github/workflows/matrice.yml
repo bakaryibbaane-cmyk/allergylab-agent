@@ -75,6 +75,47 @@ jobs:
 
       # --- Avec clé : seulement à la main ---------------------------------
 
+      # À l'exécution, le kit ne dépend que de l'API d'Anthropic. Ici, l'origine
+      # d'où tiktoken télécharge ses tokenizers devient injoignable, comme sur
+      # un réseau qui la filtrerait : si le kit en dépend encore, kit controle
+      # et kit agent échouent. L'étape vérifie d'abord que le blocage tient.
+      - name: Rendre injoignable openaipublic.blob.core.windows.net
+        if: inputs.avec_cle
+        shell: bash
+        run: |
+          origine=openaipublic.blob.core.windows.net
+          # Une ligne vide d'abord : le fichier peut ne pas finir par une fin de ligne.
+          if [ "$RUNNER_OS" = Windows ]; then
+            printf '\r\n127.0.0.1 %s\r\n' "$origine" >> /c/Windows/System32/drivers/etc/hosts
+            MSYS_NO_PATHCONV=1 ipconfig /flushdns
+          else
+            printf '\n127.0.0.1 %s\n' "$origine" | sudo tee -a /etc/hosts
+          fi
+          if [ "$RUNNER_OS" = macOS ]; then
+            sudo dscacheutil -flushcache
+            sudo killall -HUP mDNSResponder
+          fi
+          # La vérification passe par le Python du kit, comme le ferait tiktoken.
+          uv run python - "$origine" <<'FIN'
+          import socket
+          import sys
+          import urllib.error
+          import urllib.request
+
+          sys.stdout.reconfigure(encoding="utf-8")
+          origine = sys.argv[1]
+          try:
+              adresses = sorted({info[4][0] for info in socket.getaddrinfo(origine, 443)})
+              print(f"{origine} se résout en {', '.join(adresses)}")
+              urllib.request.urlopen(f"https://{origine}/encodings/cl100k_base.tiktoken", timeout=10).close()
+          except urllib.error.HTTPError as reponse:
+              sys.exit(f"ÉCHEC : {origine} a répondu (HTTP {reponse.code}), elle est encore joignable.")
+          except OSError as erreur:
+              print(f"RÉUSSITE : la connexion à {origine} échoue ({erreur}).")
+          else:
+              sys.exit(f"ÉCHEC : la connexion à {origine} aboutit encore.")
+          FIN
+
       - name: uv run kit controle
         if: inputs.avec_cle
         env:
