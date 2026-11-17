@@ -98,9 +98,12 @@ def dossier_git(racine):
     resultat = git(racine, "rev-parse", "--show-toplevel", "--absolute-git-dir")
     if resultat is None or resultat.returncode != 0:
         return None
-    haut, dossier = resultat.stdout.splitlines()
-    # Un dépôt plus haut dans l'arborescence n'est pas celui du kit.
-    return Path(dossier) if Path(haut).samefile(racine) else None
+    try:
+        haut, dossier = resultat.stdout.splitlines()
+        # Un dépôt plus haut dans l'arborescence n'est pas celui du kit.
+        return Path(dossier) if Path(haut).samefile(racine) else None
+    except (OSError, ValueError):  # une réponse de git inattendue : on fait comme s'il n'y avait pas de dépôt
+        return None
 
 
 def operation_en_cours(dossier):
