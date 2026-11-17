@@ -9,7 +9,7 @@ import sys
 import traceback
 from importlib.metadata import version
 
-from kit import cle, controle
+from kit import cle, controle, pousser
 
 AIDE = """Kit AllergyLab. Usage : uv run kit <commande>
 
@@ -18,8 +18,10 @@ AIDE = """Kit AllergyLab. Usage : uv run kit <commande>
   controle                  vérifie l'installation point par point
   controle --hors-ligne     la même chose, sans appeler le modèle
   agent "question"          pose une question à l'agent de l'équipe
+  pousser                   envoie les traces vers le dépôt de l'équipe
 
-Ajoute --detail à une commande pour voir le détail d'une erreur inattendue."""
+Ajoute --detail à une commande pour voir le détail d'une erreur inattendue,
+et, pour pousser, ce que git a répondu."""
 
 
 def regler_console():
@@ -63,6 +65,10 @@ def agent(mots):
     return question.poser(" ".join(mots))
 
 
+def envoyer(options):
+    return pousser.pousser(detail="--detail" in options)
+
+
 # Chaque verbe : la fonction qui le traite, et les options qu'il accepte
 # (None : le verbe prend un texte libre, la question).
 VERBES = {
@@ -70,6 +76,7 @@ VERBES = {
     "cle": (enregistrer_cle, []),
     "controle": (verifier, ["--hors-ligne"]),
     "agent": (agent, None),
+    "pousser": (envoyer, ["--detail"]),
 }
 
 
@@ -91,6 +98,8 @@ def main(argv=None):
     if inconnues:
         print(f"Option inconnue pour {verbe} : {' '.join(inconnues)}. Lance uv run kit pour voir les options.")
         return 1
+    if detail and permises and "--detail" in permises:
+        options.append("--detail")  # ce verbe s'en sert aussi : pousser y montre ce que git a répondu
     try:
         return fonction(options)
     except KeyboardInterrupt:
