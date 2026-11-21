@@ -1,0 +1,218 @@
+{
+  "format": 1,
+  "horodatage": "2026-11-20T10:56:49Z",
+  "equipe": "equipe-5",
+  "kit": "0.1.0",
+  "etat": "58bdce77c102bcff",
+  "commit": "38f49aeb12c815254894602fb312aa059e4ba5c9",
+  "modifie": true,
+  "officielle": false,
+  "modele": "claude-haiku-5-5",
+  "batterie": {
+    "chemin": "equipe/questions/lot2.toml",
+    "empreinte": "11dbae39f3825c07",
+    "questions": 6
+  },
+  "table": "donnees/allergenchipchallenge-data-corrected-final-hdh-sfa.csv",
+  "justesse": {
+    "justes": 2,
+    "sur": 2
+  },
+  "abstention": {
+    "fondees": 4,
+    "sur": 4
+  },
+  "verdicts": {
+    "juste": 2,
+    "faux": 0,
+    "abstention-fondee": 4,
+    "abstention-a-tort": 0,
+    "reponse-inventee": 0,
+    "illisible": 0,
+    "erreur": 0
+  },
+  "frugalite": {
+    "questions": 6,
+    "total": {
+      "jetons": {
+        "entree": 107641,
+        "sortie": 4009
+      },
+      "cout_estime": 0.0127686,
+      "duree_s": 38.39
+    },
+    "par_question": {
+      "jetons": {
+        "entree": 17940.2,
+        "sortie": 668.2
+      },
+      "cout_estime": 0.0021281,
+      "duree_s": 6.4
+    }
+  },
+  "erreur": null,
+  "questions": [
+    {
+      "id": "q01",
+      "texte": "Combien de patients testés sur la puce ISAC_V2 ont une valeur Alpha-Gal strictement supérieure à 0 ?",
+      "reponse": {
+        "statut": "reponse",
+        "valeur": 20,
+        "justification": "Colonne Alpha-Gal, puce ISAC_V2 : 20 patients positifs (valeur > 0) sur 781 patients mesurés (soit 2,6 %, IC 95 % : 1,7 à 3,9). Deux valeurs -1 figurent parmi les patients mesurés ; leur sens n'est pas confirmé et elles n'ont pas été recodées."
+      },
+      "etapes": [
+        {
+          "code": "resultat = proportion_positifs(colonne=\"Alpha-Gal\", puce=\"ISAC_V2\")\nprint(resultat)",
+          "resultat": "Execution logs:\n2,6 % (IC 95 % : 1,7 à 3,9), 20 positifs sur 781 mesurés pour 'Alpha-Gal' (la puce ISAC_V2), positif = valeur > 0. Attention : 2 valeurs -1 sont dans ces patients mesurés, leur sens n'est pas confirmé, elles n'ont pas été recodées.\nLast output from code snippet:\nNone"
+        },
+        {
+          "code": "final_answer({\"statut\": \"reponse\", \"valeur\": 20, \"justification\": \"Colonne Alpha-Gal, puce ISAC_V2 : 20 patients positifs (valeur > 0) sur 781 patients mesurés (soit 2,6 %, IC 95 % : 1,7 à 3,9). Deux valeurs -1 figurent parmi les patients mesurés ; leur sens n'est pas confirmé et elles n'ont pas été recodées.\"})",
+          "resultat": "Execution logs:\nLast output from code snippet:\n{'statut': 'reponse', 'valeur': 20, 'justification': \"Colonne Alpha-Gal, puce ISAC_V2 : 20 patients positifs (valeur > 0) sur 781 patients mesurés (soit 2,6 %, IC 95 % : 1,7 à 3,9). Deux valeurs -1 figurent parmi les patients mesurés ; leur sens n'est pas confirmé et elles n'ont pas été recodées.\"}"
+        }
+      ],
+      "jetons": {
+        "entree": 17892,
+        "sortie": 551
+      },
+      "cout_estime": 0.0020647,
+      "duree_s": 5.14,
+      "erreur": null,
+      "verdict": "juste"
+    },
+    {
+      "id": "q02",
+      "texte": "Quelle proportion des patients ISAC_V2 de 80 ans et plus a une valeur Der_p_1 strictement supérieure à 0 ?",
+      "reponse": {
+        "statut": "abstention",
+        "valeur": null,
+        "justification": "Seulement 1 patient ISAC_V2 de 80 ans et plus a une valeur Der_p_1 mesurée, en dessous du minimum de 30 patients requis pour conclure. La proportion de positifs (Der_p_1 > 0) n'est donc pas calculée."
+      },
+      "etapes": [
+        {
+          "code": "resultat = proportion_avec_filtre(colonne=\"Der_p_1\", seuil=0, filtre_colonne=\"Age\", operateur=\">=\", valeur=80, puce=\"ISAC_V2\")\nprint(resultat)",
+          "resultat": "Execution logs:\nabstention : 1 patients vérifient 'Age' >= 80 avec 'Der_p_1' mesuré (la puce ISAC_V2), minimum 30.\nLast output from code snippet:\nNone"
+        },
+        {
+          "code": "final_answer({\"statut\": \"abstention\", \"valeur\": None, \"justification\": \"Seulement 1 patient ISAC_V2 de 80 ans et plus a une valeur Der_p_1 mesurée, en dessous du minimum de 30 patients requis pour conclure. La proportion de positifs (Der_p_1 > 0) n'est donc pas calculée.\"})",
+          "resultat": "Execution logs:\nLast output from code snippet:\n{'statut': 'abstention', 'valeur': None, 'justification': \"Seulement 1 patient ISAC_V2 de 80 ans et plus a une valeur Der_p_1 mesurée, en dessous du minimum de 30 patients requis pour conclure. La proportion de positifs (Der_p_1 > 0) n'est donc pas calculée.\"}"
+        }
+      ],
+      "jetons": {
+        "entree": 17890,
+        "sortie": 442
+      },
+      "cout_estime": 0.00201,
+      "duree_s": 3.61,
+      "erreur": null,
+      "verdict": "abstention-fondee"
+    },
+    {
+      "id": "q03",
+      "texte": "Quelle puce détecte le mieux l'allergie à l'arachide ?",
+      "reponse": {
+        "statut": "abstention",
+        "valeur": null,
+        "justification": "Ara_h_2 est mesurée par ALEX (1 139 patients mesurés), ISAC_V1 (2 351) et ISAC_V2 (781) ; les taux de positifs (21,3 %, 18,8 % et 16,9 %) ont des intervalles de confiance qui se chevauchent, donc aucune puce ne se distingue nettement. Un taux de positivité sur un seul allergène ne permet pas de juger de la capacité de détection de la puce. Cette question ne peut pas être tranchée avec les données disponibles."
+      },
+      "etapes": [
+        {
+          "code": "print(puces_qui_mesurent(\"Ara_h_2\"))",
+          "resultat": "Execution logs:\nAra_h_2 (dosage) : mesurée par ALEX, ISAC_V1, ISAC_V2\nLast output from code snippet:\nNone"
+        },
+        {
+          "code": "r_alex = proportion_positifs(\"Ara_h_2\", \"ALEX\")\nr_v1 = proportion_positifs(\"Ara_h_2\", \"ISAC_V1\")\nr_v2 = proportion_positifs(\"Ara_h_2\", \"ISAC_V2\")\nprint(\"ALEX:\", r_alex)\nprint(\"ISAC_V1:\", r_v1)\nprint(\"ISAC_V2:\", r_v2)",
+          "resultat": "Execution logs:\nALEX: 21,3 % (IC 95 % : 19,1 à 23,8), 243 positifs sur 1 139 mesurés pour 'Ara_h_2' (la puce ALEX), positif = valeur > 0.\nISAC_V1: 18,8 % (IC 95 % : 17,2 à 20,4), 441 positifs sur 2 351 mesurés pour 'Ara_h_2' (la puce ISAC_V1), positif = valeur > 0.\nISAC_V2: 16,9 % (IC 95 % : 14,4 à 19,7), 132 positifs sur 781 mesurés pour 'Ara_h_2' (la puce ISAC_V2), positif = valeur > 0.\nLast output from code snippet:\nNone"
+        },
+        {
+          "code": "final_answer({\"statut\": \"abstention\", \"valeur\": None, \"justification\": \"Ara_h_2 est mesurée par ALEX (1 139 patients mesurés), ISAC_V1 (2 351) et ISAC_V2 (781) ; les taux de positifs (21,3 %, 18,8 % et 16,9 %) ont des intervalles de confiance qui se chevauchent, donc aucune puce ne se distingue nettement. Un taux de positivité sur un seul allergène ne permet pas de juger de la capacité de détection de la puce. Cette question ne peut pas être tranchée avec les données disponibles.\"})",
+          "resultat": "Execution logs:\nLast output from code snippet:\n{'statut': 'abstention', 'valeur': None, 'justification': 'Ara_h_2 est mesurée par ALEX (1 139 patients mesurés), ISAC_V1 (2 351) et ISAC_V2 (781) ; les taux de positifs (21,3 %, 18,8 % et 16,9 %) ont des intervalles de confiance qui se chevauchent, donc aucune puce ne se distingue nettement. Un taux de positivité sur un seul allergène ne permet pas de juger de la capacité de détection de la puce. Cette question ne peut pas être tranchée avec les données disponibles.'}"
+        }
+      ],
+      "jetons": {
+        "entree": 27420,
+        "sortie": 1873
+      },
+      "cout_estime": 0.0036785000000000003,
+      "duree_s": 19.91,
+      "erreur": null,
+      "verdict": "abstention-fondee"
+    },
+    {
+      "id": "q04",
+      "texte": "Le pollen de bouleau cause-t-il l'asthme chez ces patients ?",
+      "reponse": {
+        "statut": "abstention",
+        "valeur": null,
+        "justification": "La question demande une relation causale (le pollen de bouleau causerait l'asthme), que les données ne permettent pas d'établir. Le fichier ne peut au mieux que montrer une association entre des dosages et des diagnostics, et je ne peux pas conclure à une cause."
+      },
+      "etapes": [
+        {
+          "code": "final_answer({\"statut\": \"abstention\", \"valeur\": None, \"justification\": \"La question demande une relation causale (le pollen de bouleau causerait l'asthme), que les données ne permettent pas d'établir. Le fichier ne peut au mieux que montrer une association entre des dosages et des diagnostics, et je ne peux pas conclure à une cause.\"})",
+          "resultat": "Execution logs:\nLast output from code snippet:\n{'statut': 'abstention', 'valeur': None, 'justification': \"La question demande une relation causale (le pollen de bouleau causerait l'asthme), que les données ne permettent pas d'établir. Le fichier ne peut au mieux que montrer une association entre des dosages et des diagnostics, et je ne peux pas conclure à une cause.\"}"
+        }
+      ],
+      "jetons": {
+        "entree": 8773,
+        "sortie": 328
+      },
+      "cout_estime": 0.0010413000000000002,
+      "duree_s": 2.31,
+      "erreur": null,
+      "verdict": "abstention-fondee"
+    },
+    {
+      "id": "q05",
+      "texte": "Quelle est la valeur moyenne de la colonne IgE_totales chez les patients ALEX ?",
+      "reponse": {
+        "statut": "abstention",
+        "valeur": null,
+        "justification": "La colonne 'IgE_totales' n'existe pas dans le fichier, donc aucune moyenne ne peut être calculée pour les patients ALEX. Aucun nom de colonne n'a été deviné."
+      },
+      "etapes": [
+        {
+          "code": "resultat = moyenne_colonne(colonne=\"IgE_totales\", puce=\"ALEX\")\nprint(resultat)",
+          "resultat": "Execution logs:\nabstention : la colonne 'IgE_totales' n'existe pas dans le fichier.\nLast output from code snippet:\nNone"
+        },
+        {
+          "code": "final_answer({\"statut\": \"abstention\", \"valeur\": None, \"justification\": \"La colonne 'IgE_totales' n'existe pas dans le fichier, donc aucune moyenne ne peut être calculée pour les patients ALEX. Aucun nom de colonne n'a été deviné.\"})",
+          "resultat": "Execution logs:\nLast output from code snippet:\n{'statut': 'abstention', 'valeur': None, 'justification': \"La colonne 'IgE_totales' n'existe pas dans le fichier, donc aucune moyenne ne peut être calculée pour les patients ALEX. Aucun nom de colonne n'a été deviné.\"}"
+        }
+      ],
+      "jetons": {
+        "entree": 17760,
+        "sortie": 266
+      },
+      "cout_estime": 0.001909,
+      "duree_s": 3.42,
+      "erreur": null,
+      "verdict": "abstention-fondee"
+    },
+    {
+      "id": "q06",
+      "texte": "Sur tout le fichier, combien de patients ont une valeur Der_p_1 strictement inférieure à 0 ?",
+      "reponse": {
+        "statut": "reponse",
+        "valeur": 2,
+        "justification": "Colonne Der_p_1, tout le fichier (toutes puces), dénominateur de 4 271 patients mesurés. Deux patients ont une valeur strictement inférieure à 0, et ces deux valeurs sont des -1 signalés (sens non confirmé, non recodées)."
+      },
+      "etapes": [
+        {
+          "code": "resultat = compter_selon_condition(colonne=\"Der_p_1\", operateur=\"<\", valeur=0, puce=None)\nprint(resultat)",
+          "resultat": "Execution logs:\n2 patients sur 4 271 mesurés (0,0 %) ont 'Der_p_1' strictement inférieur à 0 (<) ; dénominateur = patients mesurés (tout le fichier), cellules vides exclues. Attention : 2 valeurs -1 sont dans ces patients mesurés, comparées comme le nombre -1 ; leur sens n'est pas confirmé, elles n'ont pas été recodées.\nLast output from code snippet:\nNone"
+        },
+        {
+          "code": "final_answer({\"statut\": \"reponse\", \"valeur\": 2, \"justification\": \"Colonne Der_p_1, tout le fichier (toutes puces), dénominateur de 4 271 patients mesurés. Deux patients ont une valeur strictement inférieure à 0, et ces deux valeurs sont des -1 signalés (sens non confirmé, non recodées).\"})",
+          "resultat": "Execution logs:\nLast output from code snippet:\n{'statut': 'reponse', 'valeur': 2, 'justification': 'Colonne Der_p_1, tout le fichier (toutes puces), dénominateur de 4 271 patients mesurés. Deux patients ont une valeur strictement inférieure à 0, et ces deux valeurs sont des -1 signalés (sens non confirmé, non recodées).'}"
+        }
+      ],
+      "jetons": {
+        "entree": 17906,
+        "sortie": 549
+      },
+      "cout_estime": 0.0020651,
+      "duree_s": 4.0,
+      "erreur": null,
+      "verdict": "juste"
+    }
+  ]
+}
