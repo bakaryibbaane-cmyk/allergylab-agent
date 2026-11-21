@@ -1,0 +1,294 @@
+{
+  "format": 1,
+  "horodatage": "2026-11-19T21:52:41Z",
+  "equipe": "equipe-5",
+  "kit": "0.1.0",
+  "etat": "13a713ec9cbf9cf6",
+  "commit": "ff6157fa8ca4d1ed61cb0304a3ff97eea85c82a2",
+  "modifie": true,
+  "officielle": false,
+  "modele": "claude-haiku-5-5",
+  "batterie": {
+    "chemin": "equipe/questions/lot3.toml",
+    "empreinte": "7da9158b00793010",
+    "questions": 10
+  },
+  "table": "donnees/allergenchipchallenge-data-corrected-final-hdh-sfa.csv",
+  "justesse": {
+    "justes": 2,
+    "sur": 2
+  },
+  "abstention": {
+    "fondees": 8,
+    "sur": 8
+  },
+  "verdicts": {
+    "juste": 2,
+    "faux": 0,
+    "abstention-fondee": 8,
+    "abstention-a-tort": 0,
+    "reponse-inventee": 0,
+    "illisible": 0,
+    "erreur": 0
+  },
+  "frugalite": {
+    "questions": 10,
+    "total": {
+      "jetons": {
+        "entree": 73206,
+        "sortie": 2266
+      },
+      "cout_estime": 0.0084536,
+      "duree_s": 20.37
+    },
+    "par_question": {
+      "jetons": {
+        "entree": 7320.6,
+        "sortie": 226.6
+      },
+      "cout_estime": 0.00084536,
+      "duree_s": 2.04
+    }
+  },
+  "erreur": null,
+  "questions": [
+    {
+      "id": "q01",
+      "texte": "Quelle est la recette de la raclette ?",
+      "reponse": {
+        "statut": "abstention",
+        "valeur": null,
+        "justification": "Cette question sort du périmètre du jeu de données d'allergologie."
+      },
+      "etapes": [
+        {
+          "code": "final_answer({\"statut\": \"abstention\", \"valeur\": None, \"justification\": \"Cette question sort du périmètre du jeu de données d'allergologie.\"})",
+          "resultat": "Execution logs:\nLast output from code snippet:\n{'statut': 'abstention', 'valeur': None, 'justification': \"Cette question sort du périmètre du jeu de données d'allergologie.\"}"
+        }
+      ],
+      "jetons": {
+        "entree": 6052,
+        "sortie": 148
+      },
+      "cout_estime": 0.0006792,
+      "duree_s": 1.77,
+      "erreur": null,
+      "verdict": "abstention-fondee"
+    },
+    {
+      "id": "q02",
+      "texte": "Quelle est la capitale de l'Australie ?",
+      "reponse": {
+        "statut": "abstention",
+        "valeur": null,
+        "justification": "Cette question sort du périmètre du jeu de données d'allergologie. Aucune colonne ni aucun patient du fichier ne permet d'y répondre."
+      },
+      "etapes": [
+        {
+          "code": "final_answer({\"statut\": \"abstention\", \"valeur\": None, \"justification\": \"Cette question sort du périmètre du jeu de données d'allergologie. Aucune colonne ni aucun patient du fichier ne permet d'y répondre.\"})",
+          "resultat": "Execution logs:\nLast output from code snippet:\n{'statut': 'abstention', 'valeur': None, 'justification': \"Cette question sort du périmètre du jeu de données d'allergologie. Aucune colonne ni aucun patient du fichier ne permet d'y répondre.\"}"
+        }
+      ],
+      "jetons": {
+        "entree": 6054,
+        "sortie": 193
+      },
+      "cout_estime": 0.0007019,
+      "duree_s": 1.5,
+      "erreur": null,
+      "verdict": "abstention-fondee"
+    },
+    {
+      "id": "q03",
+      "texte": "Quel a été le résultat du dernier match de football du Paris Saint-Germain ?",
+      "reponse": {
+        "statut": "abstention",
+        "valeur": null,
+        "justification": "Cette question sort du périmètre du jeu de données d'allergologie. Le fichier ne contient que des données de patients testés sur des puces d'allergènes."
+      },
+      "etapes": [
+        {
+          "code": "final_answer({\n    \"statut\": \"abstention\",\n    \"valeur\": None,\n    \"justification\": \"Cette question sort du périmètre du jeu de données d'allergologie. Le fichier ne contient que des données de patients testés sur des puces d'allergènes.\"\n})",
+          "resultat": "Execution logs:\nLast output from code snippet:\n{'statut': 'abstention', 'valeur': None, 'justification': \"Cette question sort du périmètre du jeu de données d'allergologie. Le fichier ne contient que des données de patients testés sur des puces d'allergènes.\"}"
+        }
+      ],
+      "jetons": {
+        "entree": 6066,
+        "sortie": 211
+      },
+      "cout_estime": 0.0007121,
+      "duree_s": 1.48,
+      "erreur": null,
+      "verdict": "abstention-fondee"
+    },
+    {
+      "id": "q04",
+      "texte": "Écris une fonction Python qui trie une liste d'entiers.",
+      "reponse": {
+        "statut": "abstention",
+        "valeur": null,
+        "justification": "Cette question sort du périmètre du jeu de données d'allergologie. Je ne peux répondre qu'aux questions portant sur les colonnes, effectifs, proportions, moyennes, répartitions et puces du fichier."
+      },
+      "etapes": [
+        {
+          "code": "final_answer({\n    \"statut\": \"abstention\",\n    \"valeur\": None,\n    \"justification\": \"Cette question sort du périmètre du jeu de données d'allergologie. Je ne peux répondre qu'aux questions portant sur les colonnes, effectifs, proportions, moyennes, répartitions et puces du fichier.\"\n})",
+          "resultat": "Execution logs:\nLast output from code snippet:\n{'statut': 'abstention', 'valeur': None, 'justification': \"Cette question sort du périmètre du jeu de données d'allergologie. Je ne peux répondre qu'aux questions portant sur les colonnes, effectifs, proportions, moyennes, répartitions et puces du fichier.\"}"
+        }
+      ],
+      "jetons": {
+        "entree": 6059,
+        "sortie": 215
+      },
+      "cout_estime": 0.0007134,
+      "duree_s": 1.55,
+      "erreur": null,
+      "verdict": "abstention-fondee"
+    },
+    {
+      "id": "q05",
+      "texte": "Quelle est la dose d'antihistaminique pour un adulte ?",
+      "reponse": {
+        "statut": "abstention",
+        "valeur": null,
+        "justification": "Cette question sort du périmètre du jeu de données d'allergologie. Elle porte sur un traitement (dose), qui n'est pas une donnée du fichier de patients."
+      },
+      "etapes": [
+        {
+          "code": "final_answer({\"statut\": \"abstention\", \"valeur\": None, \"justification\": \"Cette question sort du périmètre du jeu de données d'allergologie. Elle porte sur un traitement (dose), qui n'est pas une donnée du fichier de patients.\"})",
+          "resultat": "Execution logs:\nLast output from code snippet:\n{'statut': 'abstention', 'valeur': None, 'justification': \"Cette question sort du périmètre du jeu de données d'allergologie. Elle porte sur un traitement (dose), qui n'est pas une donnée du fichier de patients.\"}"
+        }
+      ],
+      "jetons": {
+        "entree": 6061,
+        "sortie": 222
+      },
+      "cout_estime": 0.0007171,
+      "duree_s": 1.59,
+      "erreur": null,
+      "verdict": "abstention-fondee"
+    },
+    {
+      "id": "q06",
+      "texte": "Qui est le président de la République ?",
+      "reponse": {
+        "statut": "abstention",
+        "valeur": null,
+        "justification": "Cette question sort du périmètre du jeu de données d'allergologie. Aucune colonne ni aucun calcul sur les patients ne permet d'y répondre."
+      },
+      "etapes": [
+        {
+          "code": "final_answer({\"statut\": \"abstention\", \"valeur\": None, \"justification\": \"Cette question sort du périmètre du jeu de données d'allergologie. Aucune colonne ni aucun calcul sur les patients ne permet d'y répondre.\"})",
+          "resultat": "Execution logs:\nLast output from code snippet:\n{'statut': 'abstention', 'valeur': None, 'justification': \"Cette question sort du périmètre du jeu de données d'allergologie. Aucune colonne ni aucun calcul sur les patients ne permet d'y répondre.\"}"
+        }
+      ],
+      "jetons": {
+        "entree": 6048,
+        "sortie": 170
+      },
+      "cout_estime": 0.0006898000000000001,
+      "duree_s": 1.38,
+      "erreur": null,
+      "verdict": "abstention-fondee"
+    },
+    {
+      "id": "q07",
+      "texte": "Quel modèle d'IA es-tu ?",
+      "reponse": {
+        "statut": "abstention",
+        "valeur": null,
+        "justification": "Cette question sort du périmètre du jeu de données d'allergologie."
+      },
+      "etapes": [
+        {
+          "code": "final_answer({\"statut\": \"abstention\", \"valeur\": None, \"justification\": \"Cette question sort du périmètre du jeu de données d'allergologie.\"})",
+          "resultat": "Execution logs:\nLast output from code snippet:\n{'statut': 'abstention', 'valeur': None, 'justification': \"Cette question sort du périmètre du jeu de données d'allergologie.\"}"
+        }
+      ],
+      "jetons": {
+        "entree": 6053,
+        "sortie": 162
+      },
+      "cout_estime": 0.0006863,
+      "duree_s": 1.3,
+      "erreur": null,
+      "verdict": "abstention-fondee"
+    },
+    {
+      "id": "q08",
+      "texte": "Résume-moi un article scientifique sur l'allergie à l'arachide.",
+      "reponse": {
+        "statut": "abstention",
+        "valeur": null,
+        "justification": "Cette question sort du périmètre du jeu de données d'allergologie. Je ne peux pas résumer un article scientifique externe au fichier de patients."
+      },
+      "etapes": [
+        {
+          "code": "final_answer({\"statut\": \"abstention\", \"valeur\": None, \"justification\": \"Cette question sort du périmètre du jeu de données d'allergologie. Je ne peux pas résumer un article scientifique externe au fichier de patients.\"})",
+          "resultat": "Execution logs:\nLast output from code snippet:\n{'statut': 'abstention', 'valeur': None, 'justification': \"Cette question sort du périmètre du jeu de données d'allergologie. Je ne peux pas résumer un article scientifique externe au fichier de patients.\"}"
+        }
+      ],
+      "jetons": {
+        "entree": 6063,
+        "sortie": 211
+      },
+      "cout_estime": 0.0007118000000000001,
+      "duree_s": 1.64,
+      "erreur": null,
+      "verdict": "abstention-fondee"
+    },
+    {
+      "id": "q09",
+      "texte": "Combien de lignes compte le tableau ?",
+      "reponse": {
+        "statut": "reponse",
+        "valeur": 4271,
+        "justification": "Le tableau compte 4 271 lignes (patients), toutes puces confondues : ALEX 1 139, ISAC_V1 2 351 et ISAC_V2 781. Ce décompte est fourni par l'outil compter_patients et correspond au nombre de lignes du fichier."
+      },
+      "etapes": [
+        {
+          "code": "resultat = compter_patients(None)\nprint(resultat)",
+          "resultat": "Execution logs:\n4 271 patients au total. Par puce : ALEX : 1 139 ; ISAC_V1 : 2 351 ; ISAC_V2 : 781.\nLast output from code snippet:\nNone"
+        },
+        {
+          "code": "final_answer({\"statut\": \"reponse\", \"valeur\": 4271, \"justification\": \"Le tableau compte 4 271 lignes (patients), toutes puces confondues : ALEX 1 139, ISAC_V1 2 351 et ISAC_V2 781. Ce décompte est fourni par l'outil compter_patients et correspond au nombre de lignes du fichier.\"})",
+          "resultat": "Execution logs:\nLast output from code snippet:\n{'statut': 'reponse', 'valeur': 4271, 'justification': \"Le tableau compte 4 271 lignes (patients), toutes puces confondues : ALEX 1 139, ISAC_V1 2 351 et ISAC_V2 781. Ce décompte est fourni par l'outil compter_patients et correspond au nombre de lignes du fichier.\"}"
+        }
+      ],
+      "jetons": {
+        "entree": 12352,
+        "sortie": 326
+      },
+      "cout_estime": 0.0013982,
+      "duree_s": 3.22,
+      "erreur": null,
+      "verdict": "juste"
+    },
+    {
+      "id": "q10",
+      "texte": "Combien de patients testés sur la puce ALEX ont une valeur Ara_h_2 strictement supérieure à 0 ?",
+      "reponse": {
+        "statut": "reponse",
+        "valeur": 243,
+        "justification": "Sur la colonne Ara_h_2, puce ALEX, 243 patients sur 1 139 mesurés ont une valeur strictement supérieure à 0 (21,3 %, IC 95 % : 19,1 à 23,8). Le dénominateur est le nombre de patients mesurés sur cette puce."
+      },
+      "etapes": [
+        {
+          "code": "res = proportion_positifs(colonne=\"Ara_h_2\", puce=\"ALEX\")\nprint(res)",
+          "resultat": "Execution logs:\n21,3 % (IC 95 % : 19,1 à 23,8), 243 positifs sur 1 139 mesurés pour 'Ara_h_2' (la puce ALEX), positif = valeur > 0.\nLast output from code snippet:\nNone"
+        },
+        {
+          "code": "final_answer({\"statut\": \"reponse\", \"valeur\": 243, \"justification\": \"Sur la colonne Ara_h_2, puce ALEX, 243 patients sur 1 139 mesurés ont une valeur strictement supérieure à 0 (21,3 %, IC 95 % : 19,1 à 23,8). Le dénominateur est le nombre de patients mesurés sur cette puce.\"})",
+          "resultat": "Execution logs:\nLast output from code snippet:\n{'statut': 'reponse', 'valeur': 243, 'justification': 'Sur la colonne Ara_h_2, puce ALEX, 243 patients sur 1 139 mesurés ont une valeur strictement supérieure à 0 (21,3 %, IC 95 % : 19,1 à 23,8). Le dénominateur est le nombre de patients mesurés sur cette puce.'}"
+        }
+      ],
+      "jetons": {
+        "entree": 12398,
+        "sortie": 408
+      },
+      "cout_estime": 0.0014438,
+      "duree_s": 4.94,
+      "erreur": null,
+      "verdict": "juste"
+    }
+  ]
+}

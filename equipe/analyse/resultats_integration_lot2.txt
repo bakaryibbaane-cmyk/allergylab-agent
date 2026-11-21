@@ -1,0 +1,14 @@
+q10 passage 1 : juste (valeur rendue : 3.74)
+q11 passage 1 : juste (valeur rendue : 49.18)
+q12 passage 1 : juste (valeur rendue : 21.68)
+q13 passage 1 : juste (valeur rendue : 30.23)
+q14 passage 1 : juste (valeur rendue : 112)
+q15 passage 1 : juste (valeur rendue : Phl_p_1)
+q16 passage 1 : abstention fondée (valeur rendue : None)
+q17 passage 1 : abstention fondée (valeur rendue : None)
+q18 passage 1 : abstention fondée (valeur rendue : None)
+q19 passage 1 : juste (valeur rendue : 52)
+q20 passage 1 : juste (valeur rendue : 2.56)
+Justesse : 8 sur 8
+Abstention : 3 sur 3
+Coût estimé du lot : 0.0399 $

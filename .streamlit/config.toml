@@ -1,0 +1,15 @@
+# Thème natif Streamlit : AllergyLab Premium (nuit, pétrole, turquoise).
+# Lu automatiquement quand on lance streamlit depuis la racine du dépôt.
+[theme]
+base = "dark"
+primaryColor = "#2dd4bf"
+backgroundColor = "#07131f"
+secondaryBackgroundColor = "#0b2233"
+textColor = "#e9f1f2"
+font = "sans serif"
+
+# Le jeu de données reste local. Le CSS de app.py charge en revanche des polices
+# depuis fonts.googleapis.com (repli sur les polices du système hors connexion).
+# Streamlit n'envoie aucune statistique d'usage.
+[browser]
+gatherUsageStats = false

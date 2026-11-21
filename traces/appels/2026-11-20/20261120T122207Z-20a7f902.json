@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "horodatage": "2026-11-20T12:22:07Z",
+  "equipe": "equipe-5",
+  "kit": "0.1.0",
+  "etat": "e03fde419109a271",
+  "commit": "669b587765337e85aaaf6c8c140234f2ea18f8b2",
+  "modifie": true,
+  "moteur": "smolagents",
+  "modele": null,
+  "question": "Quel est le coefficient de corrélation entre les valeurs de Bet_v_1 mesurées sur ISAC_V1 et sur ALEX chez les mêmes patients ?",
+  "reponse": null,
+  "etapes": [
+    {
+      "code": null,
+      "resultat": null
+    }
+  ],
+  "jetons": {
+    "entree": 0,
+    "sortie": 0
+  },
+  "cout_estime": 0.0,
+  "duree_s": 301.92,
+  "erreur": "ErreurModele : l'API a refusé l'appel (erreur 500), et aucune nouvelle tentative n'a été faite. litellm.InternalServerError: AnthropicException - Server disconnected without sending a response.. Handle with `litellm.InternalServerError`. Que faire : montre ce message à l'animateur."
+}

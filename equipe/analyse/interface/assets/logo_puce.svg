@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="AllergyLab">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5eead4"/><stop offset="1" stop-color="#14a899"/>
+    </linearGradient>
+  </defs>
+  <path d="M14 4h36a10 10 0 0 1 10 10v36a10 10 0 0 1-10 10H14A10 10 0 0 1 4 50V14A10 10 0 0 1 14 4z" fill="#0b2a3a" stroke="#2f6f7c" stroke-width="2"/>
+  <path d="M4 22 22 4h-8A10 10 0 0 0 4 14z" fill="#2dd4bf" opacity=".9"/>
+  <g fill="#9fd6d0">
+    <circle cx="22" cy="24" r="3.4" opacity=".55"/><circle cx="32" cy="24" r="5" opacity=".8"/><circle cx="42" cy="24" r="2.6" opacity=".4"/>
+    <circle cx="22" cy="34" r="4.4" opacity=".7"/><circle cx="32" cy="34" r="2.6" opacity=".4"/>
+    <circle cx="22" cy="44" r="2.6" opacity=".4"/><circle cx="32" cy="44" r="5.4" opacity=".85"/><circle cx="42" cy="44" r="3.4" opacity=".55"/>
+  </g>
+  <circle cx="42" cy="34" r="10" fill="none" stroke="#2dd4bf" stroke-width="1.6" opacity=".6"/>
+  <circle cx="42" cy="34" r="6" fill="url(#g)"/>
+</svg>

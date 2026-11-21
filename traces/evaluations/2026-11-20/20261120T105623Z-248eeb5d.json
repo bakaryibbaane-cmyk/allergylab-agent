@@ -1,0 +1,187 @@
+{
+  "format": 1,
+  "horodatage": "2026-11-20T10:56:23Z",
+  "equipe": "equipe-5",
+  "kit": "0.1.0",
+  "etat": "58bdce77c102bcff",
+  "commit": "38f49aeb12c815254894602fb312aa059e4ba5c9",
+  "modifie": true,
+  "officielle": false,
+  "modele": "claude-haiku-5-5",
+  "batterie": {
+    "chemin": "equipe/questions/lot1.toml",
+    "empreinte": "fe659da5dd2b5aaa",
+    "questions": 5
+  },
+  "table": "donnees/allergenchipchallenge-data-corrected-final-hdh-sfa.csv",
+  "justesse": {
+    "justes": 3,
+    "sur": 3
+  },
+  "abstention": {
+    "fondees": 2,
+    "sur": 2
+  },
+  "verdicts": {
+    "juste": 3,
+    "faux": 0,
+    "abstention-fondee": 2,
+    "abstention-a-tort": 0,
+    "reponse-inventee": 0,
+    "illisible": 0,
+    "erreur": 0
+  },
+  "frugalite": {
+    "questions": 5,
+    "total": {
+      "jetons": {
+        "entree": 80155,
+        "sortie": 2202
+      },
+      "cout_estime": 0.0091165,
+      "duree_s": 25.37
+    },
+    "par_question": {
+      "jetons": {
+        "entree": 16031.0,
+        "sortie": 440.4
+      },
+      "cout_estime": 0.0018233,
+      "duree_s": 5.07
+    }
+  },
+  "erreur": null,
+  "questions": [
+    {
+      "id": "q01",
+      "texte": "Combien de patients testés sur la puce ALEX ont une valeur Ara_h_2 strictement supérieure à 0 ?",
+      "reponse": {
+        "statut": "reponse",
+        "valeur": 243,
+        "justification": "Colonne Ara_h_2, puce ALEX : 243 patients ont une valeur strictement supérieure à 0, sur 1 139 patients mesurés (dénominateur, soit 21,3 %, IC 95 % : 19,1 à 23,8). Aucune valeur -1 ou 9 n'a été signalée pour cette colonne."
+      },
+      "etapes": [
+        {
+          "code": "res = proportion_positifs(colonne=\"Ara_h_2\", puce=\"ALEX\")\nprint(res)",
+          "resultat": "Execution logs:\n21,3 % (IC 95 % : 19,1 à 23,8), 243 positifs sur 1 139 mesurés pour 'Ara_h_2' (la puce ALEX), positif = valeur > 0.\nLast output from code snippet:\nNone"
+        },
+        {
+          "code": "final_answer({\"statut\": \"reponse\", \"valeur\": 243, \"justification\": \"Colonne Ara_h_2, puce ALEX : 243 patients ont une valeur strictement supérieure à 0, sur 1 139 patients mesurés (dénominateur, soit 21,3 %, IC 95 % : 19,1 à 23,8). Aucune valeur -1 ou 9 n'a été signalée pour cette colonne.\"})",
+          "resultat": "Execution logs:\nLast output from code snippet:\n{'statut': 'reponse', 'valeur': 243, 'justification': \"Colonne Ara_h_2, puce ALEX : 243 patients ont une valeur strictement supérieure à 0, sur 1 139 patients mesurés (dénominateur, soit 21,3 %, IC 95 % : 19,1 à 23,8). Aucune valeur -1 ou 9 n'a été signalée pour cette colonne.\"}"
+        }
+      ],
+      "jetons": {
+        "entree": 17812,
+        "sortie": 471
+      },
+      "cout_estime": 0.0020167,
+      "duree_s": 5.59,
+      "erreur": null,
+      "verdict": "juste"
+    },
+    {
+      "id": "q02",
+      "texte": "Sur tout le fichier, combien de patients ont une valeur Der_p_1 strictement supérieure à 0 ?",
+      "reponse": {
+        "statut": "reponse",
+        "valeur": 1549,
+        "justification": "Colonne Der_p_1, tout le fichier (toutes puces), positif = valeur > 0 ; dénominateur de 4 271 patients mesurés (proportion 36,3 %, IC 95 % : 34,8 à 37,7). Deux valeurs -1 figurent parmi les patients mesurés ; leur sens n'est pas confirmé, elles n'ont pas été recodées."
+      },
+      "etapes": [
+        {
+          "code": "resultat = proportion_positifs(colonne=\"Der_p_1\", puce=None)\nprint(resultat)",
+          "resultat": "Execution logs:\n36,3 % (IC 95 % : 34,8 à 37,7), 1 549 positifs sur 4 271 mesurés pour 'Der_p_1' (tout le fichier), positif = valeur > 0. Attention : 2 valeurs -1 sont dans ces patients mesurés, leur sens n'est pas confirmé, elles n'ont pas été recodées.\nLast output from code snippet:\nNone"
+        },
+        {
+          "code": "final_answer({\"statut\": \"reponse\", \"valeur\": 1549, \"justification\": \"Colonne Der_p_1, tout le fichier (toutes puces), positif = valeur > 0 ; dénominateur de 4 271 patients mesurés (proportion 36,3 %, IC 95 % : 34,8 à 37,7). Deux valeurs -1 figurent parmi les patients mesurés ; leur sens n'est pas confirmé, elles n'ont pas été recodées.\"})",
+          "resultat": "Execution logs:\nLast output from code snippet:\n{'statut': 'reponse', 'valeur': 1549, 'justification': \"Colonne Der_p_1, tout le fichier (toutes puces), positif = valeur > 0 ; dénominateur de 4 271 patients mesurés (proportion 36,3 %, IC 95 % : 34,8 à 37,7). Deux valeurs -1 figurent parmi les patients mesurés ; leur sens n'est pas confirmé, elles n'ont pas été recodées.\"}"
+        }
+      ],
+      "jetons": {
+        "entree": 17860,
+        "sortie": 518
+      },
+      "cout_estime": 0.002045,
+      "duree_s": 6.55,
+      "erreur": null,
+      "verdict": "juste"
+    },
+    {
+      "id": "q03",
+      "texte": "Parmi les patients pour lesquels Bet_v_4 est mesurée (valeur renseignée), combien ont une valeur Bet_v_4 strictement supérieure à 0 ? Réponds par un nombre entier de patients.",
+      "reponse": {
+        "statut": "reponse",
+        "valeur": 117,
+        "justification": "Colonne Bet_v_4, calculée sur les puces ISAC_V1 et ISAC_V2 : 117 patients ont une valeur strictement supérieure à 0 parmi les 3 132 patients mesurés. Aucune valeur -1 ou 9 n'est signalée pour cette colonne."
+      },
+      "etapes": [
+        {
+          "code": "resultat = proportion_positifs(\"Bet_v_4\", None)\nprint(resultat)",
+          "resultat": "Execution logs:\nCalculé sur ISAC_V1 et ISAC_V2 : 3,7 % (IC 95 % : 3,1 à 4,5), 117 positifs sur 3 132 mesurés pour 'Bet_v_4' (ISAC_V1 et ISAC_V2), positif = valeur > 0.\nLast output from code snippet:\nNone"
+        },
+        {
+          "code": "final_answer({\"statut\": \"reponse\", \"valeur\": 117, \"justification\": \"Colonne Bet_v_4, calculée sur les puces ISAC_V1 et ISAC_V2 : 117 patients ont une valeur strictement supérieure à 0 parmi les 3 132 patients mesurés. Aucune valeur -1 ou 9 n'est signalée pour cette colonne.\"})",
+          "resultat": "Execution logs:\nLast output from code snippet:\n{'statut': 'reponse', 'valeur': 117, 'justification': \"Colonne Bet_v_4, calculée sur les puces ISAC_V1 et ISAC_V2 : 117 patients ont une valeur strictement supérieure à 0 parmi les 3 132 patients mesurés. Aucune valeur -1 ou 9 n'est signalée pour cette colonne.\"}"
+        }
+      ],
+      "jetons": {
+        "entree": 17904,
+        "sortie": 493
+      },
+      "cout_estime": 0.0020369,
+      "duree_s": 8.0,
+      "erreur": null,
+      "verdict": "juste"
+    },
+    {
+      "id": "q04",
+      "texte": "Quelle proportion des patients testés sur la puce ISAC_V1 a une valeur Alpha-Gal strictement supérieure à 0 ?",
+      "reponse": {
+        "statut": "abstention",
+        "valeur": null,
+        "justification": "La colonne 'Alpha-Gal' n'est mesurée par aucune puce ISAC_V1 (la puce ISAC_V1 ne la contient pas), donc aucun patient ISAC_V1 ne peut entrer au dénominateur. Aucune proportion n'est calculée."
+      },
+      "etapes": [
+        {
+          "code": "res = proportion_positifs(colonne=\"Alpha-Gal\", puce=\"ISAC_V1\")\nprint(res)",
+          "resultat": "Execution logs:\nabstention : la colonne 'Alpha-Gal' n'est mesurée par aucune puce de la puce ISAC_V1.\nLast output from code snippet:\nNone"
+        },
+        {
+          "code": "final_answer({\"statut\": \"abstention\", \"valeur\": None, \"justification\": \"La colonne 'Alpha-Gal' n'est mesurée par aucune puce ISAC_V1 (la puce ISAC_V1 ne la contient pas), donc aucun patient ISAC_V1 ne peut entrer au dénominateur. Aucune proportion n'est calculée.\"})",
+          "resultat": "Execution logs:\nLast output from code snippet:\n{'statut': 'abstention', 'valeur': None, 'justification': \"La colonne 'Alpha-Gal' n'est mesurée par aucune puce ISAC_V1 (la puce ISAC_V1 ne la contient pas), donc aucun patient ISAC_V1 ne peut entrer au dénominateur. Aucune proportion n'est calculée.\"}"
+        }
+      ],
+      "jetons": {
+        "entree": 17806,
+        "sortie": 498
+      },
+      "cout_estime": 0.0020296,
+      "duree_s": 3.7,
+      "erreur": null,
+      "verdict": "abstention-fondee"
+    },
+    {
+      "id": "q05",
+      "texte": "Quel est le taux de réponse à l'immunothérapie dans la cohorte ?",
+      "reponse": {
+        "statut": "abstention",
+        "valeur": null,
+        "justification": "La question porte sur l'efficacité d'un traitement (réponse à l'immunothérapie), qui ne figure pas dans les données du fichier. Aucun calcul n'a été effectué."
+      },
+      "etapes": [
+        {
+          "code": "final_answer({\"statut\": \"abstention\", \"valeur\": None, \"justification\": \"La question porte sur l'efficacité d'un traitement (réponse à l'immunothérapie), qui ne figure pas dans les données du fichier. Aucun calcul n'a été effectué.\"})",
+          "resultat": "Execution logs:\nLast output from code snippet:\n{'statut': 'abstention', 'valeur': None, 'justification': \"La question porte sur l'efficacité d'un traitement (réponse à l'immunothérapie), qui ne figure pas dans les données du fichier. Aucun calcul n'a été effectué.\"}"
+        }
+      ],
+      "jetons": {
+        "entree": 8773,
+        "sortie": 222
+      },
+      "cout_estime": 0.0009883000000000001,
+      "duree_s": 1.53,
+      "erreur": null,
+      "verdict": "abstention-fondee"
+    }
+  ]
+}

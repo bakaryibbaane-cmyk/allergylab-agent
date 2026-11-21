@@ -1,0 +1,12 @@
+q01 passage 1 : juste (valeur rendue : 4271)
+q02 passage 1 : juste (valeur rendue : 1139)
+q03 passage 1 : juste (valeur rendue : 2070)
+q04 passage 1 : juste (valeur rendue : 23.08)
+q05 passage 1 : juste (valeur rendue : 325)
+q06 passage 1 : juste (valeur rendue : 74.83)
+q07 passage 1 : juste (valeur rendue : 1139)
+q08 passage 1 : abstention fondée (valeur rendue : None)
+q09 passage 1 : abstention fondée (valeur rendue : None)
+Justesse : 7 sur 7
+Abstention : 2 sur 2
+Coût estimé du lot : 0.1325 $

@@ -2,6 +2,8 @@
 
 Ce dépôt est le kit de démarrage d'une semaine intensive à l'EFREI, du 16 au 20 novembre 2026. Vingt étudiants de deuxième année, bases de Python, l'installent sur leur portable personnel et construisent dessus un agent d'analyse de données de santé. Le dépôt est public et le kit s'y développe directement : tout commit poussé est lu par eux, ce fichier compris, messages de commit compris.
 
+> **Dépôt d'équipe (équipe 5, privé).** La règle 1 ne s'applique pas à equipe/ (consigne.md, outils/, questions/, analyse/), qui contient le travail de l'équipe, y compris règles d'abstention, outils d'analyse et questions de contrôle. Les règles 3, 4 et 5 restent en vigueur : aucun nom ni identifiant dans les fichiers (on signe « équipe 5 »), aucune clé dans le dépôt, donnees/ intact. Par choix d'équipe, les règles 6 et 7 restent appliquées volontairement : nous n'ajoutons pas de dépendance et nous n'appelons pas le modèle sans nécessité.
+
 ## Deux sortes de dépôts
 
 Ce fichier sert dans le dépôt du kit et dans les dépôts d'équipe, qui en sont des copies. `equipe.toml` dit où l'on est.
