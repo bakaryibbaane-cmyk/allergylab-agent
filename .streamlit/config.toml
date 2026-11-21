@@ -13,3 +13,6 @@ font = "sans serif"
 # Streamlit n'envoie aucune statistique d'usage.
 [browser]
 gatherUsageStats = false
+
+[client]
+toolbarMode = "viewer"
